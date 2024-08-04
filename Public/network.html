@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-navigation-type="default" data-navbar-horizontal-shape="default">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ===============================================-->
+  <!--    Document Title-->
+  <!-- ===============================================-->
+  <title>Operation Dashboard</title>
+
+  <!-- ===============================================-->
+  <!--    Favicons-->
+  <!-- ===============================================-->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <script src="vendors/simplebar/simplebar.min.js"></script>
+  <script src="assets/js/echarts-example.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="js/opManager.js"></script>
+  <script src="js/serviceDesk.js"></script>
+  <!-- ===============================================-->
+  <!--    Stylesheets-->
+  <!-- ===============================================-->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link href="vendors/simplebar/simplebar.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-rtl.min.css" type="text/css" rel="stylesheet" id="style-rtl" />
+  <link href="assets/css/theme.min.css" type="text/css" rel="stylesheet" id="style-default" />
+  <link href="assets/css/user-rtl.min.css" type="text/css" rel="stylesheet" id="user-style-rtl" />
+  <link href="assets/css/user.min.css" type="text/css" rel="stylesheet" id="user-style-default" />
+  <script>
+    var phoenixIsRTL = window.config.config.phoenixIsRTL;
+    if (phoenixIsRTL) {
+      var linkDefault = document.getElementById('style-default');
+      var userLinkDefault = document.getElementById('user-style-default');
+      linkDefault.setAttribute('disabled', true);
+      userLinkDefault.setAttribute('disabled', true);
+      document.querySelector('html').setAttribute('dir', 'rtl');
+    } else {
+      var linkRTL = document.getElementById('style-rtl');
+      var userLinkRTL = document.getElementById('user-style-rtl');
+      linkRTL.setAttribute('disabled', true);
+      userLinkRTL.setAttribute('disabled', true);
+    }
+  </script>
+  <script>
+    // Refresh the page every 2 minutes (1 min = 60,000 ms)
+    setTimeout(function () {
+      location.reload();
+    }, 120000);
+  </script>
+  <script>
+    // Frame-busting to prevent site from being loaded within a frame without permission (click-jacking)
+    if (window.top != window.self) {
+      window.top.location.replace(window.self.location.href);
+     }
+    // Set initial scale to 80% when the page loads
+    window.onload = function() {
+      document.body.style.zoom = "80%";
+    };
+  </script>
+  <script>
+      /** async function fetchServerTime() {
+          // Assume you have an endpoint that returns the server time
+          const response = await fetch('/get-server-time');
+          const data = await response.json();
+          return new Date(data.serverTime);
+      }
+
+      function getNextRefreshTime() {
+          const now = new Date();
+          const nextRefreshTime = new Date(now);
+          nextRefreshTime.setMinutes(Math.ceil(now.getMinutes() / 1) * 1); // Set to next minute
+          nextRefreshTime.setSeconds(0, 0); // Set seconds and milliseconds to zero
+          return nextRefreshTime;
+      }
+
+      async function synchronizeRefresh() {
+          const serverTime = await fetchServerTime();
+          const nextRefreshTime = getNextRefreshTime();
+          const timeToNextRefresh = nextRefreshTime - serverTime;
+          
+          setTimeout(() => {
+              window.location.reload();
+          }, timeToNextRefresh);
+
+          // Set an interval to reload every minute after the initial reload
+          setInterval(() => {
+              window.location.reload();
+          }, 30000);
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+          synchronizeRefresh();
+      });
+  </script>
+  <link href="vendors/leaflet/leaflet.css" rel="stylesheet" />
+  <link href="vendors/leaflet.markercluster/MarkerCluster.css" rel="stylesheet" />
+  <link href="vendors/leaflet.markercluster/MarkerCluster.Default.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- ===============================================-->
+  <!--    Main Content-->
+  <!-- ===============================================-->
+
+  <main class="main" id="top">
+    <!-- Sidebar -->
+    <nav class="navbar navbar-vertical navbar-expand-lg">
+      <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+        <!-- scrollbar removed-->
+        <div class="navbar-vertical-content">
+          <ul class="navbar-nav flex-column" id="navbarVerticalNav">
+            <li class="nav-item">
+              <!-- parent pages-->
+              <div class="nav-item-wrapper">
+                <a class="nav-link" href="index.html">
+                  <div class="d-flex align-items-center">
+                    <span class="nav-link-icon">
+                      <span data-feather="pie-chart"></span>
+                    </span>
+                    <span class="nav-link-text-wrapper">
+                      <span class="nav-link-text">Home</span>
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <!-- label-->
+              <p class="navbar-vertical-label">Pages</p>
+              <hr class="navbar-vertical-line" />
+              <!-- parent pages-->
+              <div class="nav-item-wrapper">
+                <a class="nav-link" href="network.html">
+                  <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"><span class="fa-solid fa-circle-nodes"
+                        style="color:#e42855"></span></span><span class="nav-link-text-wrapper"><span
+                        class="nav-link-text">Network</span>
+                  </div>
+                </a>
+              </div>
+              <!-- parent pages-->
+              <div class="nav-item-wrapper">
+                <a class="nav-link active" href="servers.html">
+                  <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"><span class="fa-solid fa-server"
+                        style="color: #8da8fd"></span></span><span class="nav-link-text-wrapper"><span
+                        class="nav-link-text">Servers</span>
+                  </div>
+                </a>
+              </div>
+              <!-- parent pages-->
+              <div class="nav-item-wrapper">
+                <a class="nav-link" href="dailytasks.html">
+                  <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"><span class="fas fa-clipboard-check"
+                        style="color: #90d67f"></span></span><span class="nav-link-text-wrapper"><span
+                        class="nav-link-text">Daily Tasks</span>
+                  </div>
+                </a>
+              </div>
+              <!-- parent pages-->
+              <div class="nav-item-wrapper">
+                <a class="nav-link" href="calendar.html">
+                  <div class="d-flex align-items-center">
+                    <span class="nav-link-icon"><span class="fas fa-calendar" style="color: #e3f353"></span></span><span
+                      class="nav-link-text-wrapper"><span class="nav-link-text">Calendar</span></span>
+                  </div>
+                </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-vertical-footer">
+        <button
+          class="btn navbar-vertical-toggle border-0 fw-semibold w-100 white-space-nowrap d-flex align-items-center">
+          <span class="uil uil-left-arrow-to-left fs-8"></span><span class="uil uil-arrow-from-right fs-8"></span><span
+            class="navbar-vertical-footer-text ms-2">Collapsed View</span>
+        </button>
+      </div>
+    </nav>
+    <!-- End Sidebar -->
+
+    <nav class="navbar navbar-top fixed-top navbar-expand" id="navbarDefault">
+      <div class="collapse navbar-collapse justify-content-between">
+        <!-- Logo -->
+        <div class="navbar-logo">
+          <button class="btn navbar-toggler navbar-toggler-humburger-icon hover-bg-transparent" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse"
+            aria-expanded="false" aria-label="Toggle Navigation">
+            <span class="navbar-toggle-icon"><span class="toggle-line"></span></span>
+          </button>
+          <a class="navbar-brand me-1 me-sm-3" href="index.html">
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center">
+                <img />
+                <h5 class="logo-text ms-2 d-none d-sm-block">Operation Dashboard</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- End Logo -->
+
+        <!-- Theme Control (Dark/Light Mode) -->
+        <ul class="navbar-nav navbar-nav-icons flex-row">
+          <li class="nav-item">
+            <div class="theme-control-toggle fa-icon-wait px-2">
+              <input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox"
+                data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" />
+              <label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle"
+                data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Switch theme"
+                style="height: 32px; width: 32px"><span class="icon" data-feather="moon"></span></label>
+              <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle"
+                data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Switch theme"
+                style="height: 32px; width: 32px"><span class="icon" data-feather="sun"></span></label>
+            </div>
+          </li>
+          <!-- End Theme Control (Dark/Light Mode) -->
+
+          <!------------------------------------------------------------------>
+          <!-----------------------   Notification Bell ---------------------->
+          <!------------------------------------------------------------------>
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="#" style="min-width: 2.25rem" role="button" data-bs-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span class="d-block"
+                style="height: 20px; width: 20px"><span data-feather="bell"
+                  style="height: 20px; width: 20px"></span></span></a>
+
+
+            <div
+              class="dropdown-menu dropdown-menu-end notification-dropdown-menu py-0 shadow border navbar-dropdown-caret"
+              id="navbarDropdownNotfication" aria-labelledby="navbarDropdownNotfication">
+              <div class="card position-relative border-0">
+                <div class="card-header p-2">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="text-body-emphasis mb-0">Notifications</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!------------------------------------------------------------------>
+          <!--------------------   End Notification Bell --------------------->
+          <!------------------------------------------------------------------>
+
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Begin Page Content -->
+    <div class="content">
+      <div class="mb-3" data-bs-spy="scroll" data-bs-target="#widgets-scrollspy">
+        <div class="row g-4">
+          <div class="col-12 col-xxl-6">
+            <div class="d-flex mb-3 pt-2" id="scrollspyStats"><span class="fa-stack me-2 ms-n1">
+                <svg class="svg-inline--fa fa-circle fa-stack-2x text-primary" aria-hidden="true" focusable="false"
+                  data-prefix="fas" data-icon="circle" role="img" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512" data-fa-i2svg="">
+                  <path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"></path>
+                </svg><!-- <i class="fas fa-circle fa-stack-2x text-primary"></i> Font Awesome fontawesome.com -->
+                <svg viewBox="0 0 640 512" xmlns="http://www.w3.org/2000/svg" role="img" data-icon="users"
+                  data-prefix="fas" focusable="false" aria-hidden="true"
+                  class="svg-inline--fa fa-network-wired fa-inverse fa-stack-1x text-primary-subtle">
+                  <path fill="currentColor" d="M256 64l128 0 0 64-128 0 0-64zM240 0c-26.5 0-48 21.5-48 48l0 96c0 26.5 21.5 48 48 48l48 0 0 32L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0 0 32-48 0c-26.5 0-48 21.5-48 48l0 96c0 26.5 21.5 48 48 48l160 0c26.5 0 48-21.5 48-48l0-96c0-26.5-21.5-48-48-48l-48 0 0-32 256 0 0 32-48 0c-26.5 0-48 21.5-48 48l0 96c0 26.5 21.5 48 48 48l160 0c26.5 0 48-21.5 48-48l0-96c0-26.5-21.5-48-48-48l-48 0 0-32 96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-256 0 0-32 48 0c26.5 0 48-21.5 48-48l0-96c0-26.5-21.5-48-48-48L240 0zM96 448l0-64 128 0 0 64L96 448zm320-64l128 0 0 64-128 0 0-64z">
+                  </path>
+                </svg><!-- <i class="fa-inverse fa-stack-1x text-primary-subtle fas fa-percentage"></i> Font Awesome fontawesome.com --></span>
+              <div class="col">
+                <h3 class="mb-0 text-primary position-relative fw-bold"><span class="bg-body pe-2">Network & Security
+                    Utilization
+                  </span><span
+                    class="border border-primary position-absolute top-50 translate-middle-y w-100 start-0 z-n1"></span>
+                </h3>
+              </div>
+            </div>
+            <div class="row g-3">
+              <!-- Server Availability Card-->
+              <div class="col-12 col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h5 class="mb-1">
+                          Availability
+                        </h5>
+                        <h6 class="text-body-tertiary">Last 30 days</h6>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-center">
+                      <div>
+                        <canvas id="networkAvailabilityChart" 
+                          style="
+                            min-width: 50px;
+                            min-height: 50px;
+                            width: 400px;
+                            height: 400px;
+                          "
+                        ></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Add new info here -->
+
+                  <!-- End of New Info here-->
+                </div>
+              </div>
+              <!-- CPU Utilization Card -->
+              <div class="col-12 col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h5 class="mb-1">CPU Utlization</h5>
+                        <h6 class="text-body-tertiary">Last 30 days</h6>
+                      </div>
+                    </div>
+                                        <!--begin:: Utilization Chart-->
+                                        <div class="d-flex flex-center">
+                                          <div>
+                                            <canvas id="networkUtilizationChart" 
+                                              style="
+                                                min-width: 50px;
+                                                min-height: 50px;
+                                                width: 400px;
+                                                height: 400px;
+                                              "
+                                            ></canvas>
+                                          </div>
+                                        </div>
+                                        <!--end:: CPU Utilization Chart-->
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="card h-100">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h5 class="mb-1">Memory Utlization</h5>
+                        <h6 class="text-body-tertiary">Last 30 days</h6>
+                      </div>
+                    </div>
+                        <!--begin:: Memory Chart-->
+                          <div class="d-flex flex-center">
+                            <div>
+                              <canvas id="networkMemoryChart" 
+                                style="
+                                  min-width: 50px;
+                                  min-height: 50px;
+                                  width: 400px;
+                                  height: 400px;
+                                "
+                              ></canvas>
+                            </div>
+                          </div>
+                        <!--end:: Memory Chart-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-xxl-6">
+            <div class="d-flex mb-3 pt-2" id="scrollspyStats"><span class="fa-stack me-2 ms-n1"><svg
+                  class="svg-inline--fa fa-circle fa-stack-2x text-primary" aria-hidden="true" focusable="false"
+                  data-prefix="fas" data-icon="circle" role="img" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512" data-fa-i2svg="">
+                  <path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"></path>
+                </svg>
+                <svg viewBox="0 0 640 512" xmlns="http://www.w3.org/2000/svg" role="img" data-icon="computer"
+                  data-prefix="fas" focusable="false" aria-hidden="true"
+                  class="svg-inline--fa fa-computer fa-inverse fa-stack-1x text-primary-subtle">
+                  <path fill="currentColor"
+                    d="M384 96l0 224L64 320 64 96l320 0zM64 32C28.7 32 0 60.7 0 96L0 320c0 35.3 28.7 64 64 64l117.3 0-10.7 32L96 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-74.7 0-10.7-32L384 384c35.3 0 64-28.7 64-64l0-224c0-35.3-28.7-64-64-64L64 32zm464 0c-26.5 0-48 21.5-48 48l0 352c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48l-64 0zm16 64l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm-16 80c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16zm32 160a32 32 0 1 1 0 64 32 32 0 1 1 0-64z">
+                  </path>
+                </svg>
+              </span>
+              <div class="col">
+                <h3 class="mb-0 text-primary position-relative fw-bold"><span class="bg-body pe-2">Asset Inventory
+                    &amp; Alarms</span><span
+                    class="border border-primary position-absolute top-50 translate-middle-y w-100 start-0 z-n1"></span>
+                </h3>
+              </div>
+            </div>
+            <div class="row g-3 mb-2">
+              <!-- Left Side (Total Asset Inventory Section) -->
+              <div class="col-12 col-md-4">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <h5 class="mb-1">
+                          Asset Inventory<span
+                            class="badge badge-phoenix badge-phoenix-info rounded-pill fs-9 ms-2"><span
+                              class="badge-label">IT</span></span>
+                        </h5>
+                        <h6 class="text-body-tertiary">Severity of Network Devices</h6>
+                      </div>
+                    </div>
+                    
+                      <!-- Doughnut Chart For all Network & Security Devices -->
+                      <div class="d-flex justify-content-center px-4 py-2">
+                        <div>
+                          <canvas id="network-doughnut-chart" style="
+                                min-width: 50px;
+                                min-height: 50px;
+                                width: 160px;
+                                height: 160px;
+                                display: block; 
+                                box-sizing: border-box;
+                              " width="160px" height="160px"></canvas>
+                        </div>
+                      </div>
+                      <!-- End of Doughnut Chart For all Network & Security Devices -->
+
+                      <!--begin:: Progress Bar -->
+                      <!-- Progress Bars for Asset Categories -->
+                      <div class="mt-2">
+                        <div class="container" id="progressBarsContainer">
+                          <div id="progress-container-Wireless" class="progress-container">
+                            <div
+                              class="progress-label-container d-flex justify-content-between align-items-center mb-2">
+                              <div class="progress-label fs-9">Wireless</div>
+                              <div class="wirelessCount fs-9"></div>
+                            </div>
+                            <div class="progress mb-2" id="progress-Wireless"></div>
+                          </div>
+
+                          <div id="progress-container-Switch" class="progress-container">
+                            <div
+                              class="progress-label-container d-flex justify-content-between align-items-center mb-2">
+                              <div class="progress-label fs-9">Switch</div>
+                              <div class="switchCount fs-9"></div>
+                            </div>
+                            <div class="progress mb-2" id="progress-Switch"></div>
+                          </div>
+
+                          <div id="progress-container-Router" class="progress-container">
+                            <div
+                              class="progress-label-container d-flex justify-content-between align-items-center mb-2">
+                              <div class="progress-label fs-9">Router</div>
+                              <div class="routerCount fs-9"></div>
+                            </div>
+                            <div class="progress mb-2" id="progress-Router"></div>
+                          </div>
+
+                          <div id="progress-container-Firewall" class="progress-container">
+                            <div
+                              class="progress-label-container d-flex justify-content-between align-items-center mb-2">
+                              <div class="progress-label fs-9">Firewall</div>
+                              <div class="firewallCount fs-9"></div>
+                            </div>
+                            <div class="progress mb-2" id="progress-Firewall"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--end::row-->
+                  </div>
+                </div>
+              </div>
+            <!-- Right side (Current Alarms) -->
+            <div class="col-12 col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <h5>
+                        Recent Alarms<span class="badge badge-phoenix badge-phoenix-danger rounded-pill fs-9 ms-2">
+                          <span class="badge-label">Live</span>
+                        </span>
+                      </h5>
+                    </div>
+                    <div class="d-flex" style="color: #e42855;">
+                      <svg class="svg-inline--fa fa-bell me-2 fs-6" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bell" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"></path></svg><!-- <svg class="fas fa-bell me-2 fs-6"></svg> Font Awesome fontawesome.com -->
+                      <h4 class="networkAlarmCount mt-1">0</h4>
+                    </div>
+                  </div>
+                  <div class="card-body" id="networkAlert-container">
+              </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script>
+      var navbarTopStyle = window.config.config.phoenixNavbarTopStyle;
+      var navbarTop = document.querySelector('.navbar-top');
+      if (navbarTopStyle === 'darker') {
+        navbarTop.setAttribute('data-navbar-appearance', 'darker');
+      }
+
+      var navbarVerticalStyle =
+        window.config.config.phoenixNavbarVerticalStyle;
+      var navbarVertical = document.querySelector('.navbar-vertical');
+      if (navbarVertical && navbarVerticalStyle === 'darker') {
+        navbarVertical.setAttribute('data-navbar-appearance', 'darker');
+      }
+    </script>
+  </main>
+  <!-- ===============================================-->
+  <!--    End of Main Content-->
+  <!-- ===============================================-->
+
+
+  <!-- ===============================================-->
+  <!--    JavaScripts-->
+  <!-- ===============================================-->
+  <script src="vendors/popper/popper.min.js"></script>
+  <script src="vendors/bootstrap/bootstrap.min.js"></script>
+  <script src="vendors/anchorjs/anchor.min.js"></script>
+  <script src="vendors/is/is.min.js"></script>
+  <script src="vendors/fontawesome/all.min.js"></script>
+  <script src="vendors/lodash/lodash.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+  <script src="vendors/list.js/list.min.js"></script>
+  <script src="vendors/feather-icons/feather.min.js"></script>
+  <script src="vendors/dayjs/dayjs.min.js"></script>
+  <script src="vendors/leaflet/leaflet.js"></script>
+  <script src="vendors/leaflet.markercluster/leaflet.markercluster.js"></script>
+  <script src="vendors/leaflet.tilelayer.colorfilter/leaflet-tilelayer-colorfilter.min.js"></script>
+  <script src="assets/js/phoenix.js"></script>
+  <script src="vendors/echarts/echarts.min.js"></script>
+  <script src="assets/js/ecommerce-dashboard.js"></script>
+</body>
+
+</html>
